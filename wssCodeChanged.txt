@@ -1,0 +1,113 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>登录</title>
+<script type="text/javascript">
+	function checkForm(form) {
+		var userName = form.userName.value;
+		var password = form.password.value;
+		var check = form.check_code.value;
+		if (userName == null || userName == "") {
+			alert("用户名不能为空！")
+			form.userName.focus();
+			return false;
+		}
+		if (password == null || password == "") {
+			alert("密码不能为空！")
+			form.password.focus();
+			return false;
+		}
+		if (check == null || check == "") {
+			alert("验证码不能为空！")
+			form.check_code.focus();
+			return false;
+		}
+		return true;
+	}
+</script>
+<style type="text/css">
+body {
+	padding-top: 200px;
+	padding-bottom: 40px;
+	background-image: url('../img/timg.jpg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+}
+
+.container {
+	margin-top: -70px;
+	width: 100%;
+	background-repeat: no-repeat;
+}
+
+form {
+	max-width: 300px;
+	padding: 19px 29px 0px;
+	margin: 13px auto 13px;
+	margin-left: 55%;
+	background-color: rgba(255, 255, 255, 0.5);
+	border: 1px solid #e5e5e5;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .05);
+	-moz-box-shadow: 0 1px 2px rgba(0, 0, 0, .05);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, .05);
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<form name="myForm" class="form-signin" action="/CMS/LoginServlet" method="post" onsubmit="return checkForm(myForm)">
+			<span style="font-size: 30px; margin-left: 55px;">商品管理系统</span><br />
+			<br /> <br />
+			<table>
+				<tr>
+					<td>用户名：</td>
+					<td><input name="userName" type="text" /></td>
+				</tr>
+				<tr>
+					<td><br /></td>
+				</tr>
+				<tr>
+					<td>密&nbsp;&nbsp;&nbsp;&nbsp;码：</td>
+					<td><input name="password" type="password" /></td>
+				</tr>
+				<tr>
+					<td><br /></td>
+				</tr>
+
+			</table>
+			<table>
+				<tr>
+					<td>验证码：</td>
+					<td><input name="check_code" type="text" style="width: 80px" /></td>
+					<td><img id="checkcode" src="/CMS/CheckServlet"
+						onclick="this.src='/CMS/CheckServlet?'+Math.random()" /></td>
+					<td><p style="font-size: 10px; color: blue;">点击图片更新</p></td>
+				</tr>
+			</table>
+			<br /> 
+			
+			<label class="radio inline" style="margin-left:40px;"> 
+			<input id="admin" type="radio" name="userType" value="admin" checked /> 系统管理员
+			</label> 
+			<label class="radio inline"> 
+			<input id="gen" type="radio" name="userType" value="gen" ${userType==2?'checked':''} /> 普通用户
+			</label>
+			<br /><br />
+			<div style="margin-left:50px;">
+				<input name="log" type="submit" value="登录" style="height:30px; width:60px" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			    <input type="reset" value="重置" style="height:30px; width:60px"/>
+			</div>
+			<p align="center" style="padding-top: 15px;">
+				版权所有 取经三人组 <a href="http://www.baidu.com" target="_blank">http://www.baidu.com</a>
+			</p>
+		</form>
+	</div>
+</body>
+</html>
