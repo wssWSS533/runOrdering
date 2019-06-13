@@ -1,0 +1,119 @@
+package com.socket;
+import java.io.*;
+import java.net.*;
+public class Client {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		//读取操作选项
+		BufferedReader br =new BufferedReader(new InputStreamReader(System.in));
+		//操作选项
+		String selection = null;
+		//上传文件路径
+		String uploadFile = null;
+		while(true) {
+			//说明界面
+			System.out.println("请输入选项");
+			System.out.println("1: 上传文件");
+			System.out.println("2: 退出");
+			try {
+				//输入选项
+				selection = br.readLine();
+				if("2".equals(selection)) {
+					System.out.println("退出");
+					break;
+				}
+				else if("1".equals(selection)) {
+					System.out.println("输入文件路径");
+					uploadFile = br.readLine();
+					System.out.println("文件开始上传");
+					Thread uploadThread = new UploadFileHandler(uploadFile);
+					uploadThread.start();
+					uploadThread.join();
+					System.out.println("文件上传结束");
+				}
+				else {
+					System.out.println("输入错误， 请重新输入");
+				}
+			}
+			catch(IOException e) {
+				e.printStackTrace();
+			}
+			catch(InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	public static class UploadFileHandler extends Thread{
+		//客户端Socket
+		private Socket socket;
+		private String filePath;
+		public UploadFileHandler(String filePath) {
+			try {
+				//需要上传的文件
+				this.filePath = filePath;
+				//链接服务器
+				this.socket = new Socket("127.0.0.1",7099);
+			}
+			catch(UnknownHostException e) {
+				e.printStackTrace();
+			}
+			catch(IOException e) {
+				e.printStackTrace();
+			}
+		}
+		public void run() {
+			BufferedInputStream in = null;
+			BufferedOutputStream out = null;
+			byte[] buffer = new byte[1024000];
+			int len = -1;
+			try {
+				//读取上传的文件
+				in = new BufferedInputStream(new FileInputStream(new File(filePath)));
+				out = new BufferedOutputStream(socket.getOutputStream());
+				String uploadstring = Server.CLIENT_FILE_UPLOAD+","+filePath;
+				byte[] uploadbyte = uploadstring.getBytes();
+				out.write(uploadbyte, 0, uploadbyte.length);
+				out.flush();
+				//开始度数据，并传至服务器
+				while((len = in.read(buffer)) > 0) {
+					out.write(buffer, 0, len);
+					out.flush();
+				}
+			}
+			catch(FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			catch(IOException e) {
+				e.printStackTrace();
+			}
+			finally {
+				if(out != null) {
+					try {
+						out.close();
+					}
+					catch(IOException e) {
+						e.printStackTrace();
+					}
+				}
+				if(in != null) {
+					try {
+						in.close();
+					}
+					catch(IOException e) {
+						e.printStackTrace();
+					}
+				}
+				if(socket != null) {
+					try {
+						socket.close();
+					}
+					catch(IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+
+}
